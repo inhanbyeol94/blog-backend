@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum memberPlatform {
+  DEFAULT
+  KAKAO
+  GOOGLE
+  NAVER
+}
+
+model Member {
+  id            String          @id @default(uuid())
+  order         Int             @default(autoincrement())
+  email         String          @unique
+  nickname      String?
+  phoneNumber   String?         @map("phone_number")
+  password      String?
+  profileImage  String?         @map("profile_image")
+  platform      memberPlatform
+  blackList     Boolean         @default(false) @map("black_list")
+  globalAccess  Boolean         @default(true) @map("global_access")
+  isAdmin       Boolean         @default(false) @map("is_admin")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  deletedAt     DateTime?       @map("deleted_at")
+  memberHistory MemberHistory[]
+  banedMember   BanedMember[]
+  blog          Blog?
+}
+
+model MemberHistory {
+  id        String    @id @default(uuid())
+  order     Int       @default(autoincrement())
+  member    Member    @relation(fields: [memberId], references: [id])
+  memberId  String    @map("member_id")
+  ip        String?
+  country   String?
+  action    String
+  detail    String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+}
+
+model BanedMember {
+  id        String    @id @default(uuid())
+  order     Int       @default(autoincrement())
+  member    Member    @relation(fields: [memberId], references: [id])
+  memberId  String    @map("member_id")
+  duration  Int
+  reason    String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+}
+
+model Blog {
+  id            String          @id @default(uuid())
+  order         Int             @default(autoincrement())
+  member        Member          @relation(fields: [memberId], references: [id])
+  memberId      String          @unique @map("member_id")
+  address       String          @unique
+  title         String
+  subTitle      String          @map("sub_title")
+  blackList     Boolean         @default(false) @map("black_list")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  deletedAt     DateTime?       @map("deleted_at")
+  banedBlog     BanedBlog[]
+  smallCategory SmallCategory[]
+}
+
+model BanedBlog {
+  id        String    @id @default(uuid())
+  order     Int       @default(autoincrement())
+  blog      Blog      @relation(fields: [blogId], references: [id])
+  blogId    String    @map("blog_id")
+  duration  Int
+  reason    String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+}
+
+model SmallCategory {
+  id               String          @id @default(uuid())
+  order            Int             @default(autoincrement())
+  Blog             Blog            @relation(fields: [blogId], references: [id])
+  blogId           String          @map("blog_id")
+  MiddleCategory   MiddleCategory? @relation(fields: [middleCategoryId], references: [id])
+  middleCategoryId String?         @map("middle_category_id")
+  name             String
+  allowPublic      Boolean         @default(true)
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  deletedAt        DateTime?       @map("deleted_at")
+  document         Document[]
+}
+
+model MiddleCategory {
+  id              String          @id @default(uuid())
+  order           Int             @default(autoincrement())
+  LargeCategory   LargeCategory?  @relation(fields: [largeCategoryId], references: [id])
+  largeCategoryId String?         @map("large_category_id")
+  name            String
+  allowPublic     Boolean         @default(true) @map("allow_public")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  deletedAt       DateTime?       @map("deleted_at")
+  smallCategory   SmallCategory[]
+}
+
+model LargeCategory {
+  id             String           @id @default(uuid())
+  order          Int              @default(autoincrement())
+  name           String
+  allowPublic    Boolean          @default(true)
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+  middleCategory MiddleCategory[]
+}
+
+model Document {
+  id              String        @id @default(uuid())
+  order           Int           @default(autoincrement())
+  SmallCategory   SmallCategory @relation(fields: [smallCategoryId], references: [id])
+  smallCategoryId String        @map("small_category_id")
+  title           String
+  content         String
+  allowComments   Boolean       @default(true) @map("allow_comments")
+  allowPublic     Boolean       @default(true) @map("allow_public")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
+  comment         Comment[]
+}
+
+model Comment {
+  id          String    @id @default(uuid())
+  order       Int       @default(autoincrement())
+  Document    Document  @relation(fields: [documentId], references: [id])
+  documentId  String
+  content     String
+  allowPublic Boolean   @default(true) @map("allow_public")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+}
