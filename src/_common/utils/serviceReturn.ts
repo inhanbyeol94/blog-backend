@@ -10,7 +10,11 @@ export const responseAccessTokenOnly = (accessToken: string) => {
   return { accessToken };
 };
 
-export const responseAccessTokenAndRefreshToken = (accessToken: string, refreshToken: string) => {
+export const responseTokenAndMemberId = (accessToken: string, refreshToken: string, memberId: string) => {
+  return { accessToken, refreshToken, memberId };
+};
+
+export const responseTokenOnly = (accessToken: string, refreshToken: string) => {
   return { accessToken, refreshToken };
 };
 

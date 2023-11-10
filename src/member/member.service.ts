@@ -6,10 +6,10 @@ import { IMessage } from '../_common/interfaces/result.interface';
 import { responseMessageOnly } from '../_common/utils/serviceReturn';
 import { IMember, IMembersForCaching } from './member.interface';
 import { IEmailAuth } from '../auth/auth.interface';
-import * as bcrypt from 'bcrypt';
 import { Member, memberPlatform } from '@prisma/client';
 import { ReqCreateDefaultMemberDto, ReqSocialMemberDto } from './member.dto';
 import { memberMessage } from './member.message';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class MemberService implements OnModuleInit {

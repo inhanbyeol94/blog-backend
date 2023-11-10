@@ -5,7 +5,6 @@ import { ReqDefaultLoginDto, ReqSendEmailAuthCodeDto, ReqVerifyEmailAuthCodeDto 
 import { KakaoAuthGuard } from './authguard/kakao.guard';
 import { SocialPayload } from './auth.decorator';
 import { ReqSocialMemberDto } from '../member/member.dto';
-import { IRefreshToken, ISignToken } from './auth.interface';
 import { Request, Response } from 'express';
 import { GoogleAuthGuard } from './authguard/google.guard';
 import { NaverAuthGuard } from './authguard/naver.guard';

@@ -17,13 +17,23 @@ enum memberPlatform {
   NAVER
 }
 
+enum authHistoryAction {
+  LOGIN_REQUEST
+  LOGIN_SUCCESS
+  LOGIN_FAIL
+  LOGOUT_REQUEST
+  LOGOUT_SUCCESS
+  LOGOUT_FAIL
+  BAN
+}
+
 model Member {
-  id            String          @id @default(uuid())
+  id            String          @id @default(uuid()) @db.VarChar(255)
   order         Int             @default(autoincrement())
-  email         String          @unique
-  nickname      String?
+  email         String          @unique @db.VarChar(255)
+  nickname      String?         @db.VarChar(255)
   phoneNumber   String?         @map("phone_number")
-  password      String?
+  password      String?         @db.VarChar(255)
   profileImage  String?         @map("profile_image")
   platform      memberPlatform
   blackList     Boolean         @default(false) @map("black_list")
@@ -32,45 +42,45 @@ model Member {
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @updatedAt @map("updated_at")
   deletedAt     DateTime?       @map("deleted_at")
-  memberHistory MemberHistory[]
+  authHistory AuthHistory[]
   banedMember   BanedMember[]
   blog          Blog?
 }
 
-model MemberHistory {
-  id        String    @id @default(uuid())
+model AuthHistory {
+  id        String    @id @default(uuid()) @db.VarChar(255)
   order     Int       @default(autoincrement())
   member    Member    @relation(fields: [memberId], references: [id])
-  memberId  String    @map("member_id")
-  ip        String?
-  country   String?
-  action    String
-  detail    String
+  memberId  String    @map("member_id") @db.VarChar(255)
+  ip        String?   @db.VarChar(255)
+  country   String?   @db.VarChar(255)
+  action    authHistoryAction
+  detail    String    @db.VarChar(255)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 }
 
 model BanedMember {
-  id        String    @id @default(uuid())
+  id        String    @id @default(uuid()) @db.VarChar(255)
   order     Int       @default(autoincrement())
   member    Member    @relation(fields: [memberId], references: [id])
-  memberId  String    @map("member_id")
-  duration  Int
-  reason    String
+  memberId  String    @map("member_id") @db.VarChar(255)
+  reason    String    @db.VarChar(255)
+  limitedAt DateTime  @map("limited_at")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 }
 
 model Blog {
-  id            String          @id @default(uuid())
+  id            String          @id @default(uuid()) @db.VarChar(255)
   order         Int             @default(autoincrement())
   member        Member          @relation(fields: [memberId], references: [id])
-  memberId      String          @unique @map("member_id")
-  address       String          @unique
-  title         String
-  subTitle      String          @map("sub_title")
+  memberId      String          @unique @map("member_id") @db.VarChar(255)
+  address       String          @unique @db.VarChar(255)
+  title         String          @db.VarChar(255)
+  subTitle      String          @map("sub_title") @db.VarChar(255)
   blackList     Boolean         @default(false) @map("black_list")
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @updatedAt @map("updated_at")
@@ -80,25 +90,25 @@ model Blog {
 }
 
 model BanedBlog {
-  id        String    @id @default(uuid())
+  id        String    @id @default(uuid()) @db.VarChar(255)
   order     Int       @default(autoincrement())
   blog      Blog      @relation(fields: [blogId], references: [id])
-  blogId    String    @map("blog_id")
-  duration  Int
-  reason    String
+  blogId    String    @map("blog_id") @db.VarChar(255)
+  limitedAt DateTime  @map("limited_at")
+  reason    String    @db.VarChar(255)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 }
 
 model SmallCategory {
-  id               String          @id @default(uuid())
+  id               String          @id @default(uuid()) @db.VarChar(255)
   order            Int             @default(autoincrement())
   Blog             Blog            @relation(fields: [blogId], references: [id])
-  blogId           String          @map("blog_id")
+  blogId           String          @map("blog_id") @db.VarChar(255)
   MiddleCategory   MiddleCategory? @relation(fields: [middleCategoryId], references: [id])
-  middleCategoryId String?         @map("middle_category_id")
-  name             String
+  middleCategoryId String?         @map("middle_category_id") @db.VarChar(255)
+  name             String          @db.VarChar(255)
   allowPublic      Boolean         @default(true)
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
@@ -107,11 +117,11 @@ model SmallCategory {
 }
 
 model MiddleCategory {
-  id              String          @id @default(uuid())
+  id              String          @id @default(uuid()) @db.VarChar(255)
   order           Int             @default(autoincrement())
   LargeCategory   LargeCategory?  @relation(fields: [largeCategoryId], references: [id])
-  largeCategoryId String?         @map("large_category_id")
-  name            String
+  largeCategoryId String?         @map("large_category_id") @db.VarChar(255)
+  name            String          @db.VarChar(255)
   allowPublic     Boolean         @default(true) @map("allow_public")
   createdAt       DateTime        @default(now()) @map("created_at")
   updatedAt       DateTime        @updatedAt @map("updated_at")
@@ -120,9 +130,9 @@ model MiddleCategory {
 }
 
 model LargeCategory {
-  id             String           @id @default(uuid())
+  id             String           @id @default(uuid()) @db.VarChar(255)
   order          Int              @default(autoincrement())
-  name           String
+  name           String           @db.VarChar(255)
   allowPublic    Boolean          @default(true)
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")
@@ -131,11 +141,11 @@ model LargeCategory {
 }
 
 model Document {
-  id              String        @id @default(uuid())
+  id              String        @id @default(uuid()) @db.VarChar(255)
   order           Int           @default(autoincrement())
   SmallCategory   SmallCategory @relation(fields: [smallCategoryId], references: [id])
-  smallCategoryId String        @map("small_category_id")
-  title           String
+  smallCategoryId String        @map("small_category_id") @db.VarChar(255)
+  title           String        @db.VarChar(255)
   content         String
   allowComments   Boolean       @default(true) @map("allow_comments")
   allowPublic     Boolean       @default(true) @map("allow_public")
@@ -146,10 +156,10 @@ model Document {
 }
 
 model Comment {
-  id          String    @id @default(uuid())
+  id          String    @id @default(uuid()) @db.VarChar(255)
   order       Int       @default(autoincrement())
   Document    Document  @relation(fields: [documentId], references: [id])
-  documentId  String
+  documentId  String    @db.VarChar(255)
   content     String
   allowPublic Boolean   @default(true) @map("allow_public")
   createdAt   DateTime  @default(now()) @map("created_at")

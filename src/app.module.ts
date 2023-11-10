@@ -10,6 +10,8 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { SmsModule } from './sms/sms.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MailModule } from './mail/mail.module';
+import { AuthHistoryModule } from './auth-history/auth-history.module';
+import { BanedMemberModule } from './baned-member/baned-member.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { MailModule } from './mail/mail.module';
     SmsModule,
     PrismaModule,
     MailModule,
+    AuthHistoryModule,
+    BanedMemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],

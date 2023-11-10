@@ -7,6 +7,10 @@ import { memberRegex } from './member.message';
 export class ReqMemberDto {
   @IsNotEmpty()
   @IsString()
+  memberId: string;
+
+  @IsNotEmpty()
+  @IsString()
   @Matches(memberRegex.email)
   email: string;
 
@@ -38,6 +42,10 @@ export class ReqMemberDto {
   @IsNotEmpty()
   @IsString()
   socialId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  ip: string;
 }
 
 // 일반 회원가입
